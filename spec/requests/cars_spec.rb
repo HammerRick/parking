@@ -16,6 +16,9 @@ RSpec.describe '/cars', type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Car. As you add validations to Car, be sure to
   # adjust the attributes here as well.
+
+  let!(:car) { create :car }
+
   let(:valid_attributes) {
     { plate: 'AAB-0000' }
   }
@@ -24,27 +27,19 @@ RSpec.describe '/cars', type: :request do
     { plate: '2AB-000' }
   }
 
-  # This should return the minimal set of values that should be in the headers
-  # in order to pass any filters (e.g. authentication) defined in
-  # CarsController, or in your router and rack
-  # middleware. Be sure to keep this updated too.
-  let(:valid_headers) {
-    {}
-  }
-
   describe 'GET /index' do
     it 'renders a successful response' do
-      Car.create! valid_attributes
-      get cars_url, headers: valid_headers, as: :json
+      get cars_url, as: :json
       expect(response).to be_successful
+      expect(response.body).to eq([car].to_json)
     end
   end
 
   describe 'GET /show' do
     it 'renders a successful response' do
-      car = Car.create! valid_attributes
       get car_url(car), as: :json
       expect(response).to be_successful
+      expect(response.body).to eq(car.to_json)
     end
   end
 
@@ -53,13 +48,15 @@ RSpec.describe '/cars', type: :request do
       it 'creates a new Car' do
         expect {
           post cars_url,
-               params: { car: valid_attributes }, headers: valid_headers, as: :json
+               params: { car: valid_attributes }, as: :json
         }.to change(Car, :count).by(1)
       end
 
       it 'renders a JSON response with the new car' do
         post cars_url,
-             params: { car: valid_attributes }, headers: valid_headers, as: :json
+             params: { car: valid_attributes }, as: :json
+
+        expect(response.body).to eq(Car.last.to_json)
         expect(response).to have_http_status(:created)
         expect(response.content_type).to match(a_string_including('application/json'))
       end
@@ -75,7 +72,9 @@ RSpec.describe '/cars', type: :request do
 
       it 'renders a JSON response with errors for the new car' do
         post cars_url,
-             params: { car: invalid_attributes }, headers: valid_headers, as: :json
+             params: { car: invalid_attributes }, as: :json
+
+        expect(response.body).to eq({ 'plate': ['must follow the style: AAA-0000'] })
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -89,17 +88,16 @@ RSpec.describe '/cars', type: :request do
       }
 
       it 'updates the requested car' do
-        car = Car.create! valid_attributes
         patch car_url(car),
-              params: { car: new_attributes }, headers: valid_headers, as: :json
+              params: { car: new_attributes }, as: :json
         car.reload
         expect(car.plate).to eq('AAB-0001')
       end
 
       it 'renders a JSON response with the car' do
-        car = Car.create! valid_attributes
         patch car_url(car),
-              params: { car: new_attributes }, headers: valid_headers, as: :json
+              params: { car: new_attributes }, as: :json
+
         expect(response).to have_http_status(:ok)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -109,7 +107,7 @@ RSpec.describe '/cars', type: :request do
       it 'renders a JSON response with errors for the car' do
         car = Car.create! valid_attributes
         patch car_url(car),
-              params: { car: invalid_attributes }, headers: valid_headers, as: :json
+              params: { car: invalid_attributes }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
@@ -120,8 +118,10 @@ RSpec.describe '/cars', type: :request do
     it 'destroys the requested car' do
       car = Car.create! valid_attributes
       expect {
-        delete car_url(car), headers: valid_headers, as: :json
+        delete car_url(car), as: :json
       }.to change(Car, :count).by(-1)
+
+      expect(response.body).to eq('')
     end
   end
 end
