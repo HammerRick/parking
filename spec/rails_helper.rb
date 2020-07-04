@@ -42,7 +42,10 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   DatabaseCleaner.strategy = :truncation
-  DatabaseCleaner.clean
+  DatabaseCleaner.clean_with(
+    :truncation,
+    except: %w[ar_internal_metadata]
+  )
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
