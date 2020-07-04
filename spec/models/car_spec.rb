@@ -30,22 +30,22 @@ RSpec.describe Car, type: :model do
       expect(@car).to be_invalid
     end
 
-    it 'is invalid with the too few letters' do
+    it 'is invalid with too few letters' do
       @car.plate = 'AS-3214'
       expect(@car).to be_invalid
     end
 
-    it 'is invalid with the too much letters' do
+    it 'is invalid with too much letters' do
       @car.plate = 'ASQW-3214'
       expect(@car).to be_invalid
     end
 
-    it 'is invalid with the too few numbers' do
+    it 'is invalid with too few numbers' do
       @car.plate = 'ASA-321'
       expect(@car).to be_invalid
     end
 
-    it 'is invalid with the too much letters' do
+    it 'is invalid with too much letters' do
       @car.plate = 'ASQ-13214'
       expect(@car).to be_invalid
     end
