@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_02_233847) do
+ActiveRecord::Schema.define(version: 2020_07_04_171358) do
 
   create_table "cars", force: :cascade do |t|
     t.string "model"
@@ -22,4 +22,15 @@ ActiveRecord::Schema.define(version: 2020_07_02_233847) do
     t.index ["plate"], name: "index_cars_on_plate", unique: true
   end
 
+  create_table "parking_tickets", force: :cascade do |t|
+    t.datetime "in_at"
+    t.datetime "out_at"
+    t.boolean "paid"
+    t.integer "car_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["car_id"], name: "index_parking_tickets_on_car_id"
+  end
+
+  add_foreign_key "parking_tickets", "cars"
 end
