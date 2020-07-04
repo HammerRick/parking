@@ -1,5 +1,5 @@
 class Car < ApplicationRecord
-  validates :plate, presence: true, format: { with: /\A[a-zA-Z]{3}\-?\d{4}\Z/, message: 'must follow the style: AAA-0000' }
+  validates :plate, presence: true, uniqueness: true, format: { with: /\A[a-zA-Z]{3}\-?\d{4}\Z/, message: 'must follow the style: AAA-0000' }
 
   after_save do
     plate.upcase!
