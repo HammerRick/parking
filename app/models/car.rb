@@ -17,7 +17,7 @@ class Car < ApplicationRecord
   end
 
   def can_park?
-    if parking_tickets > 0
+    if parking_tickets.count.positive?
       parking_tickets.last.left?
     else
       true
