@@ -53,4 +53,34 @@ RSpec.describe Car, type: :model do
       expect(car).to be_invalid
     end
   end
+
+  describe 'parking_tickets validations' do
+    it 'is valid with no parking tickets' do
+      expect(car.parking_tickets.count).to eq(0)
+      expect(car).to be_valid
+    end
+
+    it 'is valid with no active parking tickets' do
+      create(:parking_ticket, :left, car: car)
+      expect(car.parking_tickets.count).to eq(1)
+      expect(car.parking_tickets.active.count).to eq(0)
+      expect(car).to be_valid
+    end
+
+    it 'is valid with one active parking tickets' do
+      create(:parking_ticket, :paid, car: car)
+      expect(car.parking_tickets.count).to eq(1)
+      expect(car.parking_tickets.active.count).to eq(1)
+      expect(car).to be_valid
+    end
+
+    it 'is invalid with one more than one active parking tickets' do
+      create(:parking_ticket, :paid, car: car)
+      create(:parking_ticket, :paid, car: car)
+
+      expect(car.parking_tickets.count).to eq(2)
+      expect(car.parking_tickets.active.count).to eq(2)
+      expect(car).to be_invalid
+    end
+  end
 end
