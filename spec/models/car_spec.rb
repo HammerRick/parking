@@ -83,4 +83,27 @@ RSpec.describe Car, type: :model do
       expect(car).to be_invalid
     end
   end
+
+  describe 'can_park?' do
+    it 'is true when the car has no parking_tickets' do
+      expect(car.parking_tickets.count).to eq(0)
+      expect(car.can_park?).to be true
+    end
+
+    it 'is true when the car has only inactive parking_tickets' do
+      create(:parking_ticket, :left, car: car)
+
+      expect(car.parking_tickets.count).to eq(1)
+      expect(car.parking_tickets.active.count).to eq(0)
+      expect(car.can_park?).to be true
+    end
+
+    it 'is false when the car has an active parking_ticket' do
+      create(:parking_ticket, :paid, car: car)
+
+      expect(car.parking_tickets.count).to eq(1)
+      expect(car.parking_tickets.active.count).to eq(1)
+      expect(car.can_park?).to be false
+    end
+  end
 end
