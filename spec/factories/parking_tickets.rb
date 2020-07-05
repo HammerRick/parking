@@ -1,8 +1,15 @@
 FactoryBot.define do
   factory :parking_ticket do
-    in_at { "2020-07-04 14:13:58" }
-    out_at { "2020-07-04 14:13:58" }
-    paid { false }
+    in_at { Time.zone.now - 25.minutes }
     car
+
+    trait :paid do
+      paid { true }
+    end
+
+    trait :left do
+      paid
+      out_at { Time.zone.now }
+    end
   end
 end
