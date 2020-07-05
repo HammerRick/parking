@@ -31,6 +31,10 @@ RSpec.describe '/cars', type: :request do
     it 'renders a successful response' do
       get cars_url, as: :json
       expect(response).to be_successful
+    end
+
+    it 'renders a JSON response with a list of cars' do
+      get cars_url, as: :json
       expect(response.body).to eq([car].to_json)
     end
   end
@@ -39,6 +43,10 @@ RSpec.describe '/cars', type: :request do
     it 'renders a successful response' do
       get car_url(car), as: :json
       expect(response).to be_successful
+    end
+
+    it 'renders a JSON response with the car data' do
+      get car_url(car), as: :json
       expect(response.body).to eq(car.to_json)
     end
   end
@@ -52,13 +60,19 @@ RSpec.describe '/cars', type: :request do
         }.to change(Car, :count).by(1)
       end
 
+      it 'returns http success for the new car' do
+        post cars_url,
+             params: { car: valid_attributes }, as: :json
+
+        expect(response).to have_http_status(:created)
+        expect(response.content_type).to match(a_string_including('application/json'))
+      end
+
       it 'renders a JSON response with the new car' do
         post cars_url,
              params: { car: valid_attributes }, as: :json
 
         expect(response.body).to eq(Car.last.to_json)
-        expect(response).to have_http_status(:created)
-        expect(response.content_type).to match(a_string_including('application/json'))
       end
     end
 
@@ -70,13 +84,19 @@ RSpec.describe '/cars', type: :request do
         }.to change(Car, :count).by(0)
       end
 
+      it 'returns http unprocessable_entity for the new car' do
+        post cars_url,
+             params: { car: invalid_attributes }, as: :json
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.content_type).to eq('application/json; charset=utf-8')
+      end
+
       it 'renders a JSON response with errors for the new car' do
         post cars_url,
              params: { car: invalid_attributes }, as: :json
 
         expect(response.body).to eq({ 'plate': ['must follow the style: AAA-0000'] })
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
   end
@@ -104,11 +124,17 @@ RSpec.describe '/cars', type: :request do
     end
 
     context 'with invalid parameters' do
-      it 'renders a JSON response with errors for the car' do
+      it 'returns http bad_request' do
         car = Car.create! valid_attributes
         patch car_url(car),
               params: { car: invalid_attributes }, as: :json
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'renders a JSON response with errors for the car' do
+        car = Car.create! valid_attributes
+        patch car_url(car),
+              params: { car: invalid_attributes }, as: :json
         expect(response.content_type).to eq('application/json; charset=utf-8')
       end
     end
