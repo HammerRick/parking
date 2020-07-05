@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  scope controller: 'parking' do
+  scope '/parking', controller: 'parking' do
     get '', to: 'parking#index'
     post '', to: 'parking#in'
     put ':id/pay', to: 'parking#pay'

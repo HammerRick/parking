@@ -2,16 +2,16 @@ require 'rails_helper'
 
 RSpec.describe 'Parkings', type: :request do
 
-  describe 'POST /' do
+  describe 'post /' do
     context 'valid plate' do
       it 'returns http success' do
-        POST '/parking/', params: { plate: 'FAA-1234' }
+        post '/parking/', params: { plate: 'FAA-1234' }
 
         expect(response).to have_http_status(:success)
       end
 
       it 'renders a JSON response with the car`s plate number' do
-        POST '/parking/', params: { plate: 'FAA-1234' }
+        post '/parking/', params: { plate: 'FAA-1234' }
         pt = ParkingTicker.last
 
         expect(JSON.parse(response.body)).to eq({ id: pt.id, message: 'Car with plate number FAA-1234 sucefully parked.' })
@@ -20,13 +20,13 @@ RSpec.describe 'Parkings', type: :request do
 
     context 'invalid plate' do
       it 'returns http bad_request' do
-        POST '/parking/'
+        post '/parking/'
 
         expect(response).to have_http_status(:bad_request)
       end
 
       it 'renders a JSON response with errors for the parking attempt' do
-        POST '/parking/'
+        post '/parking/'
 
         expect(JSON.parse(response.body)).to eq({ plate: 'FAA-1234' })
       end
