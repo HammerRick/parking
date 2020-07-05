@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
   scope controller: 'parking' do
     get '', to: 'parking#index'
-    post 'park'
-    put ':id/out', to: 'parking#out'
+    post '', to: 'parking#in'
     put ':id/pay', to: 'parking#pay'
+    put ':id/out', to: 'parking#out'
     get ':plate', to: 'parking#history'
   end
 

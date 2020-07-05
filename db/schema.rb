@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 2020_07_04_171358) do
   create_table "parking_tickets", force: :cascade do |t|
     t.datetime "in_at"
     t.datetime "out_at"
-    t.boolean "paid"
+    t.boolean "paid", default: false
     t.integer "car_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
