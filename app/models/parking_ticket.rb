@@ -6,6 +6,8 @@ class ParkingTicket < ApplicationRecord
   validate :cannot_leave_in_the_future,
     :cannot_leave_without_paying
 
+  scope :active, -> { where(out_at: nil) }
+
   def cannot_leave_in_the_future
     if out_at.present? && out_at > Time.zone.now
       errors.add(:paid, 'leave datime cannot be in the future')
