@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Car, type: :model do
   let(:car) { create :car }
 
-  context 'plate validations' do
+  describe 'plate validations' do
     it 'is valid with a valid plate' do
       expect(car).to be_valid
     end
