@@ -44,7 +44,7 @@ class ParkingController < ApplicationController
       parking_ticket.out_at = Time.zone.now if parking_ticket.out_at.nil?
       render json: { message: 'Thank you for you preference, good bye!' }
     else
-      render json: { message: "Your car has alredy been returned to you at #{parking_ticket.out_at}" }
+      render json: { message: "Your car has already been returned to you at #{parking_ticket.out_at}" }
     end
   end
 

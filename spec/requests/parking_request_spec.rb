@@ -174,7 +174,7 @@ RSpec.describe 'Parkings', type: :request do
         put "/parking/#{parking_ticket.id}/out"
         expect(JSON.parse(response.body)).to eq(
           {
-            'message' => "Your car has alredy been returned to you at #{parking_ticket.out_at}"
+            'message' => "Your car has already been returned to you at #{parking_ticket.out_at}"
           }
         )
       end

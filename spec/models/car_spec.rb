@@ -8,7 +8,7 @@ RSpec.describe Car, type: :model do
       expect(car).to be_valid
     end
 
-    it 'is invalid with a valid but alredy used plate' do
+    it 'is invalid with a valid but already used plate' do
       duplicated_car = car.dup
       expect(duplicated_car).to be_invalid
     end
