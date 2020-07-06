@@ -99,12 +99,12 @@ RSpec.describe ParkingTicket, type: :model do
       out_at: Time.zone.now - 2.hours
     }
 
-    it "shows difference betwen in_at and current time if the car didn't left yet" do
+    it "shows difference between in_at and current time if the car didn't left yet" do
       expect(paid_parking_ticket.left?).to be false
       expect(paid_parking_ticket.time_stayed).to eq('03:00')
     end
 
-    it 'shows difference betwen in_at and out_at if the car alredy left' do
+    it 'shows difference between in_at and out_at if the car already left' do
       expect(finished_parking_ticket.left?).to be true
       expect(finished_parking_ticket.time_stayed).to eq('01:00')
     end
