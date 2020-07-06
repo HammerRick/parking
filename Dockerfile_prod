@@ -1,0 +1,15 @@
+FROM ruby:2.7.0
+LABEL name="Parking_prod"
+LABEL version=1.0
+
+# Copy application code
+COPY . /application
+# Change to the application's directory
+WORKDIR /application
+
+RUN bundle config set deployment 'true' without 'development test' \
+    && bundle install \
+    && bundle exec rails db:create
+
+ENV RAILS_ENV production
+ENTRYPOINT './entrypoint.sh'
