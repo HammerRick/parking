@@ -1,5 +1,6 @@
 class ParkingController < ApplicationController
-  include ActionView::Helpers::TextHelper
+  include PrettyTime
+
   def in
     plate = params['plate']
     car = Car.find_or_create_by(plate: plate)
@@ -58,23 +59,10 @@ class ParkingController < ApplicationController
 
   private
 
-  def seconds_to_pretty_time(seconds)
-    days, rest = seconds.to_i.divmod(86_400)
-    hours, rest = rest.divmod(3_600)
-    minutes, _rest = rest.divmod(60)
-
-    response = ''
-    response << pluralize(days, 'day') << ' ' if days.positive?
-    response << pluralize(hours, 'hour') << ' ' if hours.positive?
-    response << pluralize(minutes, 'minute') if minutes.positive?
-
-    response.present? ? response.strip : '0 minutes'
-  end
-
   def simplify_ticket(parking_ticket)
     {
       id: parking_ticket.id,
-      time: seconds_to_pretty_time(parking_ticket.time_stayed),
+      time: normalize_time(parking_ticket.time_stayed),
       paid: parking_ticket.paid,
       left: parking_ticket.left?
     }
