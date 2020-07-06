@@ -1,0 +1,16 @@
+# Version of docker-compose
+version: '3'
+
+# Containers we are going to run
+services:
+  # Our Rails container
+  rails:
+    # The build parameters for this container.
+    build:
+      # Here we define that it should build from the current directory
+      context: .
+    volumes:
+      - .:/parking
+    ports:
+      # Mapping the port to make the Rails app accessible outside of the container
+      - "3000:3000"
