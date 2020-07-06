@@ -64,21 +64,6 @@ RSpec.describe 'Parkings', type: :request do
     end
   end
 
-  describe 'GET /' do
-    it 'returns http success' do
-      get '/parking/'
-
-      expect(response).to have_http_status(:success)
-    end
-
-    xit 'returns parked cars' do
-      get '/parking/'
-
-      # TODO: implement response
-    end
-  end
-
-
   describe 'PUT /:id/pay' do
     context 'unpaid ticket' do
       it 'returns http success' do
@@ -198,17 +183,58 @@ RSpec.describe 'Parkings', type: :request do
 
   describe 'GET /:plate' do
     it 'returns http success' do
-      parking_ticket= create(:parking_ticket, :paid)
-      get "/parking/#{parking_ticket.plate}"
+      parking_ticket = create(:parking_ticket, :paid)
+
+      get "/parking/#{parking_ticket.car.plate}"
       expect(response).to have_http_status(:success)
     end
 
     it 'renders a JSON response with requested information' do
       parking_ticket= create(:parking_ticket, :paid)
-      get "/parking/#{parking_ticket.plate}"
-      expect(JSON.parse(response.body)).to eq([
-        { id: parking_ticket.id, time: '25 minutes', paid: true, left: false }
-      ])
+
+      get "/parking/#{parking_ticket.car.plate}"
+      expect(JSON.parse(response.body)).to eq(
+        [
+          {
+            'id' => parking_ticket.id,
+            'time' => '25 minutes',
+            'paid' => true,
+            'left' => false
+          }
+        ]
+      )
+    end
+  end
+
+  describe 'test seconds_to_pretty_time directly' do
+    let(:parking_controller) { ParkingController.new }
+
+    it 'returns 0 minutes for 59' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 59)).to eq('0 minutes')
+    end
+
+    it 'returns 1 minute for 60' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 60)).to eq('1 minute')
+    end
+
+    it 'returns 1 hour for 3600' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 3600)).to eq('1 hour')
+    end
+
+    it 'returns 2 hours for 7200' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 7200)).to eq('2 hours')
+    end
+
+    it 'returns 2 hours 30 minutes for 9000' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 9000)).to eq('2 hours 30 minutes')
+    end
+
+    it 'returns 1 day 2 hours 30 minutes for 95_400' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 95_400)).to eq('1 day 2 hours 30 minutes')
+    end
+
+    it 'returns 2 days 30 minutes for 174_600' do
+      expect(parking_controller.send(:seconds_to_pretty_time, 174_600)).to eq('2 days 30 minutes')
     end
   end
 end

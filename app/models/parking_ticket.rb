@@ -30,10 +30,7 @@ class ParkingTicket < ApplicationRecord
     delta_time = if left?
       out_at - in_at
     else
-    Time.zone.now - in_at
+      Time.zone.now - in_at
     end
-
-    Time.at(delta_time).utc.strftime '%H:%M'
-    # TODO: fix this so if you go over a day it doesn't reset to 0
   end
 end
