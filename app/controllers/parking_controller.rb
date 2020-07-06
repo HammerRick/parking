@@ -49,7 +49,7 @@ class ParkingController < ApplicationController
   end
 
   def history
-    car = Car.find_by(plate: params['plate'])
+    car = Car.by_plate(params['plate'])
     history = car.parking_tickets.map do |parking_ticket|
       simplify_ticket(parking_ticket)
     end
