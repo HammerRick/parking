@@ -182,16 +182,13 @@ RSpec.describe 'Parkings', type: :request do
   end
 
   describe 'GET /:plate' do
+    let(:parking_ticket) { create :parking_ticket, :left }
     it 'returns http success' do
-      parking_ticket = create(:parking_ticket, :paid)
-
       get "/parking/#{parking_ticket.car.plate}"
       expect(response).to have_http_status(:success)
     end
 
-    it 'renders a JSON response with requested information' do
-      parking_ticket= create(:parking_ticket, :paid)
-
+    it 'renders a JSON response with information on one ticket' do
       get "/parking/#{parking_ticket.car.plate}"
       expect(JSON.parse(response.body)).to eq(
         [
@@ -199,6 +196,29 @@ RSpec.describe 'Parkings', type: :request do
             'id' => parking_ticket.id,
             'time' => '25 minutes',
             'paid' => true,
+            'left' => true
+          }
+        ]
+      )
+    end
+
+    it 'renders a JSON response with information on two tickets' do
+      car = parking_ticket.car
+      car.parking_tickets << build(:parking_ticket, :no_car)
+      new_parking_ticket = car.parking_tickets.last
+      get "/parking/#{car.plate}"
+      expect(JSON.parse(response.body)).to eq(
+        [
+          {
+            'id' => parking_ticket.id,
+            'time' => '25 minutes',
+            'paid' => true,
+            'left' => true
+          },
+          {
+            'id' => new_parking_ticket.id,
+            'time' => '25 minutes',
+            'paid' => false,
             'left' => false
           }
         ]
