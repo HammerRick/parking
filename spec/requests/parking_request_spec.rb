@@ -45,7 +45,7 @@ RSpec.describe 'Parkings', type: :request do
       end
     end
 
-    context 'valid plate but car alredy has an active parking_ticket' do
+    context 'valid plate but car already has an active parking_ticket' do
       let(:car) { create :car, plate: valid_plate}
       let!(:parking_ticket) { create :parking_ticket, car: car}
       it 'returns http bad_request' do
@@ -92,23 +92,42 @@ RSpec.describe 'Parkings', type: :request do
         parking_ticket= create(:parking_ticket)
 
         put "/parking/#{parking_ticket.id}/pay"
-        expect(JSON.parse(response.body)).to eq({ message: 'Thank you, payment received!' })
-      end
-    end
-
-    context 'paid ticket' do
-      it 'returns http bad_request' do
-        parking_ticket= create(:parking_ticket)
-
-        put "/parking/#{parking_ticket.id}/pay"
-        expect(response).to have_http_status(:bad_request)
       end
 
-      it 'returns http success' do
-        parking_ticket= create(:parking_ticket)
+      context 'paid ticket' do
+        it 'returns http success' do
+          parking_ticket= create(:parking_ticket, :paid)
 
-        put "/parking/#{parking_ticket.id}/pay"
-        expect(JSON.parse(response.body)).to eq({ message: 'Error, please pay your parking ticket.' })
+          put "/parking/#{parking_ticket.id}/pay"
+          expect(response).to have_http_status(:success)
+        end
+
+        it 'renders a JSON response confirming payment' do
+          parking_ticket= create(:parking_ticket, :paid)
+
+          put "/parking/#{parking_ticket.id}/pay"
+          expect(JSON.parse(response.body)).to eq(
+            {
+              'message' => 'Thank you, but this ticket has already been paid, new payment not accepted.'
+            }
+          )
+        end
+      end
+
+      context 'invalid ticket' do
+        it 'returns http success' do
+          put "/parking/-1/pay"
+          expect(response).to have_http_status(:not_found)
+        end
+
+        it 'renders a JSON response with not found errors' do
+          put "/parking/-1/pay"
+          expect(JSON.parse(response.body)).to eq(
+            {
+              'error' => 'Parking Ticket with id -1 not found.'
+            }
+          )
+        end
       end
     end
   end
