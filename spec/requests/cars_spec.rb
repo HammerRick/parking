@@ -96,7 +96,7 @@ RSpec.describe '/cars', type: :request do
         post cars_url,
              params: { car: invalid_attributes }, as: :json
 
-        expect(response.body).to eq({ 'plate': ['must follow the style: AAA-0000'] })
+        expect(response.body).to eq({ 'plate': ['must follow the style: AAA-0000'] }.to_json)
       end
     end
   end
