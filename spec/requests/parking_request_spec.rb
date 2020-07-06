@@ -134,34 +134,64 @@ RSpec.describe 'Parkings', type: :request do
 
   describe 'PUT /:id/out' do
     context 'paid ticket' do
-      it 'returns http success' do
-        parking_ticket= create(:parking_ticket, :paid)
+      let(:parking_ticket) { create :parking_ticket, :paid }
 
+      it 'returns http success' do
         put "/parking/#{parking_ticket.id}/out"
         expect(response).to have_http_status(:success)
       end
 
       it 'renders a JSON response confirming end of transaction' do
-        parking_ticket= create(:parking_ticket, :paid)
-
         put "/parking/#{parking_ticket.id}/out"
-        expect(JSON.parse(response.body)).to eq({ message: 'Thank you for you preference, good bye!' })
+        expect(JSON.parse(response.body)).to eq({ 'message' => 'Thank you for you preference, good bye!' })
       end
     end
 
     context 'unpaid ticket' do
-      it 'returns http bad_request' do
-        parking_ticket= create(:parking_ticket)
+      let(:parking_ticket) { create :parking_ticket }
 
+      it 'returns http bad_request' do
         put "/parking/#{parking_ticket.id}/out"
         expect(response).to have_http_status(:bad_request)
       end
 
       it 'renders a JSON response requesting payment' do
-        parking_ticket= create(:parking_ticket)
-
         put "/parking/#{parking_ticket.id}/out"
-        expect(JSON.parse(response.body)).to eq({ message: 'Error, please pay your parking ticket.' })
+        expect(JSON.parse(response.body)).to eq({ 'error' => 'Please pay this ticket before leaving.' })
+      end
+    end
+
+    context 'invalid ticket' do
+      it 'returns http success' do
+        put "/parking/-1/out"
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'renders a JSON response with not found errors' do
+        put "/parking/-1/out"
+        expect(JSON.parse(response.body)).to eq(
+          {
+            'error' => 'Parking Ticket with id -1 not found.'
+          }
+        )
+      end
+    end
+
+    context 'ticket with out_at present' do
+      let(:parking_ticket) { create :parking_ticket, :left }
+
+      it 'returns http success' do
+        put "/parking/#{parking_ticket.id}/out"
+        expect(response).to have_http_status(:success)
+      end
+
+      it 'renders a JSON response with not found errors' do
+        put "/parking/#{parking_ticket.id}/out"
+        expect(JSON.parse(response.body)).to eq(
+          {
+            'message' => "Your car has alredy been returned to you at #{parking_ticket.out_at}"
+          }
+        )
       end
     end
   end
