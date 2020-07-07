@@ -3,9 +3,9 @@ LABEL name="Parking_dev"
 LABEL version=1.0
 
 # Copy application code
-COPY . /application
+COPY . /parking
 # Change to the application's directory
-WORKDIR /application
+WORKDIR /parking
 
 RUN bundle install \
   && bundle exec rails db:create
