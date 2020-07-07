@@ -7,4 +7,7 @@ Rails.application.routes.draw do
   end
 
   resources :cars, except: :destroy
+
+  root 'help#index'
+  match "*path", to: "help#index", via: :all
 end
