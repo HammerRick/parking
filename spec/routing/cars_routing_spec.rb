@@ -21,9 +21,5 @@ RSpec.describe CarsController, type: :routing do
     it 'routes to #update via PATCH' do
       expect(patch: '/cars/1').to route_to('cars#update', id: '1')
     end
-
-    it 'routes to #destroy' do
-      expect(delete: '/cars/1').to route_to('cars#destroy', id: '1')
-    end
   end
 end

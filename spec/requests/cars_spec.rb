@@ -139,15 +139,4 @@ RSpec.describe '/cars', type: :request do
       end
     end
   end
-
-  describe 'DELETE /destroy' do
-    it 'destroys the requested car' do
-      car = Car.create! valid_attributes
-      expect {
-        delete car_url(car), as: :json
-      }.to change(Car, :count).by(-1)
-
-      expect(response.body).to eq('')
-    end
-  end
 end

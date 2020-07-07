@@ -6,5 +6,5 @@ Rails.application.routes.draw do
     get ':plate', to: 'parking#history'
   end
 
-  resources :cars
+  resources :cars, except: :destroy
 end
