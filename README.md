@@ -77,5 +77,5 @@ docker start -ia parking_prod
 Getting a shell into the container
 
 ```shell
-docker start -ia parking_prod
+docker exec -it parking_prod bash
 ```
