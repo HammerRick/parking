@@ -7,9 +7,11 @@ COPY . /application
 # Change to the application's directory
 WORKDIR /application
 
-RUN bundle config set deployment 'true' without 'development test' \
+ENV RAILS_ENV production
+
+RUN bundle config set deployment 'true' \
+    && bundle config set without 'development test' \
     && bundle install \
     && bundle exec rails db:create
 
-ENV RAILS_ENV production
 ENTRYPOINT './entrypoint.sh'
